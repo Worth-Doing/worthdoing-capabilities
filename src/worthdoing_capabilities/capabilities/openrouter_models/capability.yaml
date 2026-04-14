@@ -1,0 +1,78 @@
+name: openrouter.models
+version: 0.1.0
+description: List and inspect available LLM models on OpenRouter with filtering by name or category
+category: ai
+tags:
+  - llm
+  - models
+  - openrouter
+  - catalog
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: Search filter for model name or description
+    category:
+      type: string
+      description: "Filter by category (e.g. programming, roleplay)"
+  required: []
+
+output:
+  type: object
+  properties:
+    models:
+      type: array
+      description: List of matching models
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+          name:
+            type: string
+          description:
+            type: string
+          context_length:
+            type: integer
+          pricing_prompt:
+            type: string
+          pricing_completion:
+            type: string
+          input_modalities:
+            type: array
+          output_modalities:
+            type: array
+    total:
+      type: integer
+      description: Total number of models returned
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.openrouter_models.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user wants to browse or search available LLM models
+    - When comparing model capabilities, pricing, or context lengths
+    - When deciding which model to use for a chat completion
+  when_not_to_use:
+    - When the user already knows which model to use and wants to run a completion
+    - When the task is unrelated to LLM model selection
+  latency_hint: medium
+  cost_hint: free

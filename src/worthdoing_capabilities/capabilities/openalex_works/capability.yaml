@@ -1,0 +1,80 @@
+name: openalex.works
+version: 0.1.0
+description: Search scholarly works and papers via the OpenAlex API
+category: research
+tags:
+  - academic
+  - papers
+  - research
+  - citations
+  - openalex
+  - scholarly
+  - references
+
+input:
+  type: object
+  properties:
+    search:
+      type: string
+      description: Full-text search query
+    doi:
+      type: string
+      description: "Look up by DOI (e.g. 10.1038/s41586-020-2649-2)"
+    filter:
+      type: string
+      description: "OpenAlex filter string (e.g. publication_year:2024,is_oa:true)"
+    sort:
+      type: string
+      description: "Sort field (e.g. cited_by_count:desc, publication_date:desc)"
+    per_page:
+      type: integer
+      description: Results per page (max 100)
+    page:
+      type: integer
+      description: Page number
+  required: []
+
+output:
+  type: object
+  properties:
+    works:
+      type: array
+      description: Array of work objects
+    total_count:
+      type: integer
+    page:
+      type: integer
+    per_page:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.openalex_works.handler.execute
+
+auth:
+  type: api_key
+  env: OPENALEX_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 20
+
+planner:
+  when_to_use:
+    - When the user needs to search for academic papers or scholarly works
+    - When looking up a specific paper by DOI
+    - When finding research on a scientific topic
+    - When checking citation counts or publication details
+  when_not_to_use:
+    - When searching for general web content (use web search instead)
+    - When looking for author profiles (use openalex.authors instead)
+    - When looking for institution details (use openalex.institutions instead)
+  latency_hint: medium
+  cost_hint: low

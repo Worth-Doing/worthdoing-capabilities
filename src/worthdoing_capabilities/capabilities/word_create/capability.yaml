@@ -1,0 +1,94 @@
+name: word.create
+version: 0.1.0
+description: Generate a formatted Word (.docx) document with headings, paragraphs, tables, and lists
+category: document
+tags:
+  - word
+  - docx
+  - document
+  - report
+
+input:
+  type: object
+  properties:
+    output_path:
+      type: string
+      description: Path for the output .docx file
+    title:
+      type: string
+      description: Optional document title
+    content:
+      type: array
+      description: Array of content blocks
+      items:
+        type: object
+        properties:
+          type:
+            type: string
+            description: "Block type: heading, paragraph, table, or list"
+          level:
+            type: integer
+            description: Heading level 1-4 (for heading type)
+          text:
+            type: string
+            description: Text content
+          bold:
+            type: boolean
+            description: Whether text should be bold
+          items:
+            type: array
+            items:
+              type: string
+            description: List items (for list type)
+          headers:
+            type: array
+            items:
+              type: string
+            description: Table column headers (for table type)
+          rows:
+            type: array
+            items:
+              type: array
+            description: Table data rows (for table type)
+  required:
+    - output_path
+    - content
+
+output:
+  type: object
+  properties:
+    path:
+      type: string
+    blocks_count:
+      type: integer
+    page_estimate:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.word_create.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: false
+  ttl_seconds: 0
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user needs to create a Word document
+    - When the user wants to generate a report in .docx format
+    - When producing formatted documents with headings, tables, and lists
+  when_not_to_use:
+    - When the user wants to read an existing Word document
+    - When plain text output is sufficient
+  latency_hint: low
+  cost_hint: free

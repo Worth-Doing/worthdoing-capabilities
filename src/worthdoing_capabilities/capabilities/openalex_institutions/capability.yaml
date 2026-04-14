@@ -1,0 +1,68 @@
+name: openalex.institutions
+version: 0.1.0
+description: Search academic institutions and universities via the OpenAlex API
+category: research
+tags:
+  - academic
+  - universities
+  - institutions
+  - openalex
+  - scholarly
+
+input:
+  type: object
+  properties:
+    search:
+      type: string
+      description: Institution name search query
+    filter:
+      type: string
+      description: "OpenAlex filter string (e.g. country_code:US,type:education)"
+    per_page:
+      type: integer
+      description: Results per page (max 100)
+    page:
+      type: integer
+      description: Page number
+  required: []
+
+output:
+  type: object
+  properties:
+    institutions:
+      type: array
+      description: Array of institution objects
+    total_count:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.openalex_institutions.handler.execute
+
+auth:
+  type: api_key
+  env: OPENALEX_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user needs to find information about academic institutions or universities
+    - When comparing institutions by research output or citations
+    - When looking up a university's research profile
+    - When filtering institutions by country or type
+  when_not_to_use:
+    - When searching for papers or publications (use openalex.works instead)
+    - When searching for individual researchers (use openalex.authors instead)
+    - When looking for non-academic organizations
+  latency_hint: medium
+  cost_hint: low

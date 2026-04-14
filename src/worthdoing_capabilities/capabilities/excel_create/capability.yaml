@@ -1,0 +1,82 @@
+name: excel.create
+version: 0.1.0
+description: Generate a styled Excel (.xlsx) workbook with multiple sheets, headers, and data rows
+category: document
+tags:
+  - excel
+  - xlsx
+  - spreadsheet
+  - document
+
+input:
+  type: object
+  properties:
+    output_path:
+      type: string
+      description: Path for the output .xlsx file
+    sheets:
+      type: array
+      description: Array of sheet definitions
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Sheet name
+          headers:
+            type: array
+            items:
+              type: string
+            description: Column headers
+          rows:
+            type: array
+            items:
+              type: array
+            description: Data rows
+          column_widths:
+            type: array
+            items:
+              type: number
+            description: Optional column widths
+  required:
+    - output_path
+    - sheets
+
+output:
+  type: object
+  properties:
+    path:
+      type: string
+    sheets_count:
+      type: integer
+    total_rows:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.excel_create.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: false
+  ttl_seconds: 0
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user needs to create an Excel spreadsheet
+    - When the user wants to export data to .xlsx format
+    - When generating tabular reports in Excel format
+  when_not_to_use:
+    - When the user wants to read an existing Excel file
+    - When CSV format is sufficient
+  latency_hint: low
+  cost_hint: free

@@ -1,0 +1,141 @@
+name: latex.create
+version: 0.1.0
+description: Generate a complete LaTeX (.tex) document with sections, equations, tables, code listings, and bibliography
+category: document
+tags:
+  - latex
+  - tex
+  - academic
+  - document
+  - pdf
+
+input:
+  type: object
+  properties:
+    output_path:
+      type: string
+      description: Path for the output .tex file
+    document_class:
+      type: string
+      description: "LaTeX document class (default: article)"
+    title:
+      type: string
+      description: Document title
+    author:
+      type: string
+      description: Document author
+    date:
+      type: string
+      description: Document date
+    packages:
+      type: array
+      items:
+        type: string
+      description: Additional LaTeX packages to include
+    content:
+      type: array
+      description: Array of content blocks
+      items:
+        type: object
+        properties:
+          type:
+            type: string
+            description: "Block type: section, subsection, text, equation, itemize, enumerate, table, code, figure_placeholder"
+          text:
+            type: string
+            description: Text content
+          level:
+            type: integer
+            description: Optional level indicator
+          items:
+            type: array
+            items:
+              type: string
+            description: List items (for itemize/enumerate)
+          headers:
+            type: array
+            items:
+              type: string
+            description: Table column headers (for table type)
+          rows:
+            type: array
+            items:
+              type: array
+            description: Table data rows (for table type)
+          language:
+            type: string
+            description: Programming language (for code type)
+          label:
+            type: string
+            description: Label for cross-referencing
+          caption:
+            type: string
+            description: Caption text (for table/figure)
+    bibliography:
+      type: array
+      description: Bibliography entries
+      items:
+        type: object
+        properties:
+          key:
+            type: string
+          type:
+            type: string
+          title:
+            type: string
+          author:
+            type: string
+          year:
+            type: string
+          journal:
+            type: string
+          booktitle:
+            type: string
+          publisher:
+            type: string
+  required:
+    - output_path
+    - content
+
+output:
+  type: object
+  properties:
+    path:
+      type: string
+    blocks_count:
+      type: integer
+    has_bibliography:
+      type: boolean
+    packages_used:
+      type: array
+      items:
+        type: string
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.latex_create.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: false
+  ttl_seconds: 0
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user needs to create a LaTeX document
+    - When generating academic papers or technical reports in .tex format
+    - When the user wants a document that can be compiled to PDF via LaTeX
+  when_not_to_use:
+    - When the user wants a compiled PDF directly
+    - When a simpler Word or text format is sufficient
+  latency_hint: low
+  cost_hint: free

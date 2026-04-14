@@ -1,0 +1,71 @@
+name: openalex.authors
+version: 0.1.0
+description: Search academic authors and researcher profiles via the OpenAlex API
+category: research
+tags:
+  - academic
+  - authors
+  - researchers
+  - openalex
+  - scholarly
+
+input:
+  type: object
+  properties:
+    search:
+      type: string
+      description: Author name search query
+    orcid:
+      type: string
+      description: "ORCID identifier lookup (e.g. 0000-0001-2345-6789)"
+    filter:
+      type: string
+      description: "OpenAlex filter string (e.g. has_orcid:true)"
+    per_page:
+      type: integer
+      description: Results per page (max 100)
+    page:
+      type: integer
+      description: Page number
+  required: []
+
+output:
+  type: object
+  properties:
+    authors:
+      type: array
+      description: Array of author objects
+    total_count:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.openalex_authors.handler.execute
+
+auth:
+  type: api_key
+  env: OPENALEX_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user needs to find information about an academic author or researcher
+    - When looking up an author by ORCID
+    - When comparing researcher profiles or h-indices
+    - When finding prolific authors in a research area
+  when_not_to_use:
+    - When searching for papers or publications (use openalex.works instead)
+    - When looking for institution details (use openalex.institutions instead)
+    - When searching for non-academic people
+  latency_hint: medium
+  cost_hint: low
