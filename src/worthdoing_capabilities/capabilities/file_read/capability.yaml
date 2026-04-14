@@ -1,0 +1,60 @@
+name: file.read
+version: 0.1.0
+description: Read the content of a local file and return its text, size, and metadata
+category: filesystem
+tags:
+  - file
+  - filesystem
+  - read
+  - local
+
+input:
+  type: object
+  properties:
+    path:
+      type: string
+      description: Absolute or relative path to the file to read
+  required:
+    - path
+
+output:
+  type: object
+  properties:
+    path:
+      type: string
+    content:
+      type: string
+    size:
+      type: integer
+    exists:
+      type: boolean
+    encoding:
+      type: string
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.file_read.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: true
+  ttl_seconds: 60
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 5
+
+planner:
+  when_to_use:
+    - When the user asks to read or view a local file
+    - When file content is needed as input for another capability
+  when_not_to_use:
+    - When reading remote URLs (use url_fetch instead)
+    - When listing directory contents (use shell.run instead)
+  latency_hint: low
+  cost_hint: free

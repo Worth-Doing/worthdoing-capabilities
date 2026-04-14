@@ -1,0 +1,15 @@
+version: "0.0.1"
+description: This contract is missing required fields
+category: broken
+tags:
+  - invalid
+input:
+  type: object
+  properties:
+    foo:
+      type: string
+output:
+  type: object
+  properties:
+    bar:
+      type: string

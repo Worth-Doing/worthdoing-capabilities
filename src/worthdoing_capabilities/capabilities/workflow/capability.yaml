@@ -1,0 +1,63 @@
+name: workflow.simple_chain
+version: 0.1.0
+description: A simple workflow that chains url_fetch and file.read capabilities in sequence
+category: orchestration
+tags:
+  - workflow
+  - orchestration
+  - chain
+  - multi-step
+
+input:
+  type: object
+  properties:
+    url:
+      type: string
+      description: URL to fetch in the first step
+    output_path:
+      type: string
+      description: File path to read in the second step
+  required:
+    - url
+    - output_path
+
+output:
+  type: object
+  properties:
+    steps_completed:
+      type: integer
+    results:
+      type: array
+
+execution:
+  executor: workflow
+  steps:
+    - capability: url_fetch
+      input_map:
+        url: "{{ input.url }}"
+    - capability: file.read
+      input_map:
+        path: "{{ input.output_path }}"
+
+auth:
+  type: none
+
+cache:
+  enabled: false
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 60
+
+planner:
+  when_to_use:
+    - When a multi-step pipeline involving fetch and file read is needed
+    - When demonstrating workflow chaining capabilities
+  when_not_to_use:
+    - When only one of the steps is needed individually
+    - When custom orchestration logic is required
+  latency_hint: high
+  cost_hint: low

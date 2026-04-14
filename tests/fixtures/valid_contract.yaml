@@ -1,0 +1,32 @@
+name: test.sample
+version: "0.1.0"
+description: A sample test capability for unit testing
+category: testing
+tags:
+  - test
+  - sample
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: A test query string
+  required:
+    - query
+output:
+  type: object
+  properties:
+    result:
+      type: string
+execution:
+  executor: python
+  function: tests.fixtures.sample_handler.execute
+auth:
+  type: none
+cache:
+  enabled: false
+retry:
+  max_attempts: 1
+  backoff: none
+timeout:
+  seconds: 10

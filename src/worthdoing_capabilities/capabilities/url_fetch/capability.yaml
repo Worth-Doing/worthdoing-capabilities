@@ -1,0 +1,60 @@
+name: url_fetch
+version: 0.1.0
+description: Fetch the content of a URL and return text, status code, and headers
+category: web
+tags:
+  - web
+  - fetch
+  - http
+  - scraping
+
+input:
+  type: object
+  properties:
+    url:
+      type: string
+      description: The URL to fetch
+  required:
+    - url
+
+output:
+  type: object
+  properties:
+    url:
+      type: string
+    status_code:
+      type: integer
+    content_type:
+      type: string
+    content:
+      type: string
+    length:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.url_fetch.handler.execute
+
+auth:
+  type: none
+
+cache:
+  enabled: true
+  ttl_seconds: 120
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 20
+
+planner:
+  when_to_use:
+    - When the user asks to fetch or read a web page
+    - When URL content needs to be downloaded or scraped
+  when_not_to_use:
+    - When searching for information (use web_search instead)
+    - When reading local files (use file.read instead)
+  latency_hint: medium
+  cost_hint: low

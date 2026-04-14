@@ -1,0 +1,56 @@
+name: shell.run
+version: 0.1.0
+description: Execute a shell command on the local system and return stdout, stderr, and return code
+category: system
+tags:
+  - shell
+  - system
+  - command
+  - local
+
+input:
+  type: object
+  properties:
+    command:
+      type: string
+      description: The shell command to execute
+  required:
+    - command
+
+output:
+  type: object
+  properties:
+    stdout:
+      type: string
+    stderr:
+      type: string
+    returncode:
+      type: integer
+
+execution:
+  executor: shell
+  command: "{{ input.command }}"
+
+auth:
+  type: none
+
+cache:
+  enabled: false
+
+retry:
+  max_attempts: 1
+  backoff: none
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user asks to run a shell or system command
+    - When local system information is needed (e.g. disk space, processes)
+  when_not_to_use:
+    - When the command could be destructive without user confirmation
+    - When a dedicated capability exists for the task
+    - When running untrusted or user-supplied commands without sanitization
+  latency_hint: low
+  cost_hint: free

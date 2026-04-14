@@ -1,0 +1,59 @@
+name: web_search
+version: 0.1.0
+description: Search the web using a query string and return relevant results
+category: search
+tags:
+  - web
+  - search
+  - information-retrieval
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: The search query
+    max_results:
+      type: integer
+      description: Maximum number of results to return
+  required:
+    - query
+
+output:
+  type: object
+  properties:
+    query:
+      type: string
+    results:
+      type: array
+    total:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.web_search.handler.execute
+
+auth:
+  type: api_key
+  env: SEARCH_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user asks to search the web
+    - When current information is needed that is not in training data
+  when_not_to_use:
+    - When the answer is already known
+    - When searching internal documents
+  latency_hint: medium
+  cost_hint: low

@@ -1,0 +1,60 @@
+name: embeddings.generate
+version: 0.1.0
+description: Generate text embeddings as a vector of floats for semantic search and similarity
+category: ai
+tags:
+  - ai
+  - embeddings
+  - nlp
+  - vector
+  - semantic-search
+
+input:
+  type: object
+  properties:
+    text:
+      type: string
+      description: The text to generate embeddings for
+  required:
+    - text
+
+output:
+  type: object
+  properties:
+    text:
+      type: string
+    model:
+      type: string
+    dimensions:
+      type: integer
+    vector:
+      type: array
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.embeddings.handler.execute
+
+auth:
+  type: api_key
+  env: EMBEDDINGS_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When text needs to be converted to a vector for similarity search
+    - When building semantic search or retrieval-augmented generation pipelines
+  when_not_to_use:
+    - When exact string matching is sufficient
+    - When the text is too short to be meaningful (single characters)
+  latency_hint: medium
+  cost_hint: low

@@ -1,0 +1,65 @@
+name: market_data.quote
+version: 0.1.0
+description: Fetch a real-time stock or asset quote for a given ticker symbol
+category: finance
+tags:
+  - finance
+  - market-data
+  - stocks
+  - quotes
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker symbol (e.g. AAPL, MSFT, BTC-USD)
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    price:
+      type: number
+    currency:
+      type: string
+    change:
+      type: number
+    change_percent:
+      type: number
+    volume:
+      type: integer
+    timestamp:
+      type: string
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.market_data.handler.execute
+
+auth:
+  type: api_key
+  env: MARKET_DATA_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 30
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 10
+
+planner:
+  when_to_use:
+    - When the user asks for a stock price or market quote
+    - When current financial data is needed for a ticker symbol
+  when_not_to_use:
+    - When historical data is needed (use a dedicated historical API)
+    - When the user asks for financial news rather than prices
+  latency_hint: low
+  cost_hint: low
