@@ -1,0 +1,57 @@
+name: exa.answer
+version: 0.1.0
+description: Get a direct AI-generated answer to a query with citations using the Exa API
+category: search
+tags:
+  - web
+  - search
+  - exa
+  - answer
+  - question-answering
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: The question or query to answer
+  required:
+    - query
+
+output:
+  type: object
+  properties:
+    answer:
+      type: string
+    citations:
+      type: array
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.exa_answer.handler.execute
+
+auth:
+  type: api_key
+  env: EXA_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user asks a direct question that needs a sourced answer
+    - When a concise answer with citations is preferred over raw search results
+    - When the user wants a summarized answer from web sources
+  when_not_to_use:
+    - When the user wants to browse multiple search results
+    - When detailed page content is needed
+  latency_hint: high
+  cost_hint: medium

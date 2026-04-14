@@ -1,0 +1,72 @@
+name: firecrawl.scrape
+version: 0.1.0
+description: Scrape a web page and extract clean content using the Firecrawl API
+category: web
+tags:
+  - web
+  - scraping
+  - firecrawl
+  - extraction
+
+input:
+  type: object
+  properties:
+    url:
+      type: string
+      description: The URL of the web page to scrape
+    formats:
+      type: array
+      description: Output formats to return (e.g. markdown, html)
+      default:
+        - markdown
+    only_main_content:
+      type: boolean
+      description: Whether to extract only the main content of the page
+      default: true
+  required:
+    - url
+
+output:
+  type: object
+  properties:
+    success:
+      type: boolean
+    markdown:
+      type: string
+    html:
+      type: string
+    links:
+      type: array
+    metadata:
+      type: object
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.firecrawl_scrape.handler.execute
+
+auth:
+  type: bearer
+  env: FIRECRAWL_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 120
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user wants to scrape or extract content from a web page
+    - When clean text or markdown is needed from a URL
+    - When extracting the main content of a web page
+  when_not_to_use:
+    - When searching the web for information (use firecrawl.search instead)
+    - When listing all URLs on a site (use firecrawl.map instead)
+    - When reading local files (use file.read instead)
+  latency_hint: medium
+  cost_hint: low

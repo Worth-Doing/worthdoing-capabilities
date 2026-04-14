@@ -1,0 +1,86 @@
+name: fmp.quote
+version: 0.1.0
+description: Fetch a real-time stock quote from Financial Modeling Prep API
+category: finance
+tags:
+  - finance
+  - market-data
+  - stocks
+  - quotes
+  - fmp
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker symbol (e.g. AAPL, MSFT, GOOGL)
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    name:
+      type: string
+    price:
+      type: number
+    change:
+      type: number
+    change_percent:
+      type: number
+    volume:
+      type: integer
+    market_cap:
+      type: number
+    pe:
+      type: number
+    eps:
+      type: number
+    day_high:
+      type: number
+    day_low:
+      type: number
+    year_high:
+      type: number
+    year_low:
+      type: number
+    open:
+      type: number
+    previous_close:
+      type: number
+    exchange:
+      type: string
+    timestamp:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.fmp_quote.handler.execute
+
+auth:
+  type: api_key
+  env: FMP_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 30
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 10
+
+planner:
+  when_to_use:
+    - When the user asks for a real-time stock quote via FMP
+    - When detailed quote data including PE, EPS, and market cap is needed
+  when_not_to_use:
+    - When historical price data is needed (use fmp.historical_prices)
+    - When company profile information is needed (use fmp.profile)
+  latency_hint: low
+  cost_hint: low

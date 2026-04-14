@@ -1,0 +1,78 @@
+name: fmp.financial_statements
+version: 0.1.0
+description: Fetch financial statements (income, balance sheet, cash flow) from Financial Modeling Prep API
+category: finance
+tags:
+  - finance
+  - financial-statements
+  - fundamentals
+  - fmp
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker symbol (e.g. AAPL, MSFT, GOOGL)
+    statement_type:
+      type: string
+      enum:
+        - income
+        - balance_sheet
+        - cash_flow
+      description: Type of financial statement to retrieve
+    period:
+      type: string
+      enum:
+        - annual
+        - quarter
+      description: Reporting period (default annual)
+    limit:
+      type: integer
+      description: Number of periods to return (default 5)
+  required:
+    - symbol
+    - statement_type
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    statement_type:
+      type: string
+    period:
+      type: string
+    data:
+      type: array
+      items:
+        type: object
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.fmp_financial_statements.handler.execute
+
+auth:
+  type: api_key
+  env: FMP_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user asks for income statements, balance sheets, or cash flow statements
+    - When financial fundamentals or accounting data is needed
+  when_not_to_use:
+    - When real-time price data is needed (use fmp.quote)
+    - When company overview information is needed (use fmp.profile)
+  latency_hint: medium
+  cost_hint: low

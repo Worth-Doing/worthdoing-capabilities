@@ -1,0 +1,81 @@
+name: exa.search
+version: 0.1.0
+description: Search the web using Exa's neural/keyword search API
+category: search
+tags:
+  - web
+  - search
+  - exa
+  - neural-search
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: The search query
+    num_results:
+      type: integer
+      description: Number of results to return
+    type:
+      type: string
+      description: "Search type: auto, neural, or keyword"
+      enum:
+        - auto
+        - neural
+        - keyword
+    category:
+      type: string
+      description: Filter results by category
+    include_domains:
+      type: array
+      items:
+        type: string
+      description: List of domains to restrict search to
+    start_published_date:
+      type: string
+      description: Only return results published after this date (ISO 8601)
+  required:
+    - query
+
+output:
+  type: object
+  properties:
+    query:
+      type: string
+    results:
+      type: array
+    request_id:
+      type: string
+    total:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.exa_search.handler.execute
+
+auth:
+  type: api_key
+  env: EXA_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user needs to search the web for information
+    - When current or recent information is needed
+    - When performing research on a topic
+  when_not_to_use:
+    - When the answer is already known from context
+    - When searching internal or private documents
+  latency_hint: medium
+  cost_hint: low

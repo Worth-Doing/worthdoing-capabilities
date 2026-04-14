@@ -1,0 +1,60 @@
+name: eodhd.fundamentals
+version: 0.1.0
+description: Fetch fundamental data for a company from EODHD API
+category: finance
+tags:
+  - finance
+  - fundamentals
+  - company-data
+  - eodhd
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker in SYMBOL.EXCHANGE format (e.g. AAPL.US, MSFT.US)
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    general:
+      type: object
+      description: General company information (name, sector, industry, etc.)
+    financials:
+      type: object
+      description: Financial data including income statement, balance sheet, cash flow
+    highlights:
+      type: object
+      description: Key financial highlights (market cap, PE ratio, EPS, etc.)
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.eodhd_fundamentals.handler.execute
+
+auth:
+  type: api_key
+  env: EODHD_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user asks for company fundamentals from EODHD
+    - When financial highlights, general info, or detailed financials are needed
+  when_not_to_use:
+    - When only historical price data is needed (use eodhd.eod)
+    - When searching for tickers (use eodhd.search)
+  latency_hint: medium
+  cost_hint: low

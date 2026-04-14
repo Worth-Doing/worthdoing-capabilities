@@ -1,0 +1,59 @@
+name: tavily.extract
+version: 0.1.0
+description: Extract content from web pages using Tavily extraction API
+category: web
+tags:
+  - extract
+  - web
+  - scrape
+  - tavily
+  - content
+
+input:
+  type: object
+  properties:
+    urls:
+      type: array
+      description: List of URLs to extract content from
+    extract_depth:
+      type: string
+      description: Depth of extraction - basic is faster, advanced is more thorough
+  required:
+    - urls
+
+output:
+  type: object
+  properties:
+    results:
+      type: array
+    failed_results:
+      type: array
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.tavily_extract.handler.execute
+
+auth:
+  type: bearer
+  env: TAVILY_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When you need to extract full content from one or more web pages
+    - When reading articles, documentation, or web page content
+  when_not_to_use:
+    - When you only need search results, not full page content
+    - When the URL content is already available locally
+  latency_hint: medium
+  cost_hint: low

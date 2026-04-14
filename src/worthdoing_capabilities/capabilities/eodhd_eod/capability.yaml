@@ -1,0 +1,78 @@
+name: eodhd.eod
+version: 0.1.0
+description: Fetch end-of-day historical price data from EODHD API
+category: finance
+tags:
+  - finance
+  - historical-prices
+  - market-data
+  - eodhd
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker in SYMBOL.EXCHANGE format (e.g. AAPL.US, MSFT.US)
+    from_date:
+      type: string
+      description: Start date in YYYY-MM-DD format
+    to_date:
+      type: string
+      description: End date in YYYY-MM-DD format
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    data:
+      type: array
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+          open:
+            type: number
+          high:
+            type: number
+          low:
+            type: number
+          close:
+            type: number
+          adjusted_close:
+            type: number
+          volume:
+            type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.eodhd_eod.handler.execute
+
+auth:
+  type: api_key
+  env: EODHD_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 10
+
+planner:
+  when_to_use:
+    - When the user asks for end-of-day historical prices from EODHD
+    - When adjusted close prices are needed for backtesting or analysis
+  when_not_to_use:
+    - When real-time intraday data is needed
+    - When fundamental data is needed (use eodhd.fundamentals)
+  latency_hint: low
+  cost_hint: low

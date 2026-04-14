@@ -1,0 +1,65 @@
+name: eodhd.search
+version: 0.1.0
+description: Search for tickers and securities using EODHD API
+category: finance
+tags:
+  - finance
+  - search
+  - tickers
+  - eodhd
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: Search query (company name or ticker symbol)
+  required:
+    - query
+
+output:
+  type: object
+  properties:
+    results:
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            type: string
+          exchange:
+            type: string
+          name:
+            type: string
+          type:
+            type: string
+          currency:
+            type: string
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.eodhd_search.handler.execute
+
+auth:
+  type: api_key
+  env: EODHD_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 10
+
+planner:
+  when_to_use:
+    - When the user wants to search for a ticker symbol by company name
+    - When looking up available securities on EODHD
+  when_not_to_use:
+    - When the exact ticker is already known (use eodhd.eod or eodhd.fundamentals directly)
+  latency_hint: low
+  cost_hint: low

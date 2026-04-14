@@ -1,0 +1,65 @@
+name: firecrawl.map
+version: 0.1.0
+description: Map a website to discover all its URLs using the Firecrawl API
+category: web
+tags:
+  - web
+  - mapping
+  - firecrawl
+  - sitemap
+  - crawling
+
+input:
+  type: object
+  properties:
+    url:
+      type: string
+      description: The base URL of the website to map
+    limit:
+      type: integer
+      description: Maximum number of URLs to return
+      default: 100
+    search:
+      type: string
+      description: Optional search term to filter discovered URLs
+  required:
+    - url
+
+output:
+  type: object
+  properties:
+    success:
+      type: boolean
+    links:
+      type: array
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.firecrawl_map.handler.execute
+
+auth:
+  type: bearer
+  env: FIRECRAWL_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user wants to discover all URLs or pages on a website
+    - When building a sitemap or list of pages
+    - When finding specific pages on a site by keyword
+  when_not_to_use:
+    - When scraping content from a specific URL (use firecrawl.scrape instead)
+    - When searching the web for information (use firecrawl.search instead)
+    - When reading local files (use file.read instead)
+  latency_hint: medium
+  cost_hint: low

@@ -1,0 +1,77 @@
+name: fmp.profile
+version: 0.1.0
+description: Fetch a company profile from Financial Modeling Prep API
+category: finance
+tags:
+  - finance
+  - company-profile
+  - fundamentals
+  - fmp
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker symbol (e.g. AAPL, MSFT, GOOGL)
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    company_name:
+      type: string
+    description:
+      type: string
+    sector:
+      type: string
+    industry:
+      type: string
+    ceo:
+      type: string
+    website:
+      type: string
+    country:
+      type: string
+    employees:
+      type: integer
+    market_cap:
+      type: number
+    ipo_date:
+      type: string
+    exchange:
+      type: string
+    image:
+      type: string
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.fmp_profile.handler.execute
+
+auth:
+  type: api_key
+  env: FMP_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 10
+
+planner:
+  when_to_use:
+    - When the user asks for company information such as sector, industry, or CEO
+    - When a company profile or overview is needed
+  when_not_to_use:
+    - When real-time price data is needed (use fmp.quote)
+    - When financial statements are needed (use fmp.financial_statements)
+  latency_hint: low
+  cost_hint: low

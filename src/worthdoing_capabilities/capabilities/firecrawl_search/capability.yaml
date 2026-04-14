@@ -1,0 +1,64 @@
+name: firecrawl.search
+version: 0.1.0
+description: Search the web using the Firecrawl API and return results with scraped content
+category: search
+tags:
+  - search
+  - web
+  - firecrawl
+  - information-retrieval
+
+input:
+  type: object
+  properties:
+    query:
+      type: string
+      description: The search query
+    limit:
+      type: integer
+      description: Maximum number of results to return
+      default: 5
+    country:
+      type: string
+      description: Country code to filter results (e.g. us, gb, fr)
+  required:
+    - query
+
+output:
+  type: object
+  properties:
+    success:
+      type: boolean
+    results:
+      type: array
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.firecrawl_search.handler.execute
+
+auth:
+  type: bearer
+  env: FIRECRAWL_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 30
+
+planner:
+  when_to_use:
+    - When the user wants to search the web for information
+    - When current or real-time information is needed
+    - When searching and scraping results in one step
+  when_not_to_use:
+    - When scraping a specific known URL (use firecrawl.scrape instead)
+    - When mapping all URLs on a site (use firecrawl.map instead)
+    - When the answer is already known
+  latency_hint: medium
+  cost_hint: low

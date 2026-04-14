@@ -1,0 +1,81 @@
+name: fmp.historical_prices
+version: 0.1.0
+description: Fetch historical daily price data from Financial Modeling Prep API
+category: finance
+tags:
+  - finance
+  - historical-prices
+  - market-data
+  - fmp
+
+input:
+  type: object
+  properties:
+    symbol:
+      type: string
+      description: Ticker symbol (e.g. AAPL, MSFT, GOOGL)
+    from_date:
+      type: string
+      description: Start date in YYYY-MM-DD format
+    to_date:
+      type: string
+      description: End date in YYYY-MM-DD format
+    timeseries:
+      type: integer
+      description: Number of most recent trading days to return
+  required:
+    - symbol
+
+output:
+  type: object
+  properties:
+    symbol:
+      type: string
+    historical:
+      type: array
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+          open:
+            type: number
+          high:
+            type: number
+          low:
+            type: number
+          close:
+            type: number
+          volume:
+            type: integer
+          change_percent:
+            type: number
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.fmp_historical_prices.handler.execute
+
+auth:
+  type: api_key
+  env: FMP_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 300
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 15
+
+planner:
+  when_to_use:
+    - When the user asks for historical stock prices or price charts
+    - When past price data over a date range is needed
+  when_not_to_use:
+    - When only the current price is needed (use fmp.quote)
+    - When financial statements are needed (use fmp.financial_statements)
+  latency_hint: medium
+  cost_hint: low

@@ -1,0 +1,58 @@
+name: exa.contents
+version: 0.1.0
+description: Retrieve full page contents for a list of URLs using the Exa API
+category: web
+tags:
+  - web
+  - content
+  - exa
+  - extraction
+
+input:
+  type: object
+  properties:
+    urls:
+      type: array
+      items:
+        type: string
+      description: List of URLs to retrieve contents for
+  required:
+    - urls
+
+output:
+  type: object
+  properties:
+    results:
+      type: array
+    total:
+      type: integer
+
+execution:
+  executor: python
+  function: worthdoing_capabilities.capabilities.exa_contents.handler.execute
+
+auth:
+  type: api_key
+  env: EXA_API_KEY
+
+cache:
+  enabled: true
+  ttl_seconds: 600
+
+retry:
+  max_attempts: 2
+  backoff: exponential
+
+timeout:
+  seconds: 20
+
+planner:
+  when_to_use:
+    - When the user needs the full text content of specific web pages
+    - When extracting detailed information from known URLs
+    - When enriching search results with full page content
+  when_not_to_use:
+    - When the user wants to search for pages (use exa.search instead)
+    - When URLs are not yet known
+  latency_hint: medium
+  cost_hint: medium
